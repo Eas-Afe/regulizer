@@ -10,9 +10,10 @@ from tensorflow.keras.regularizers import l2,l1
 
 
 #dense = couche entiérement connecté, fait sur la couche de sortie
-# load _ data retourne variables x,y de test et de train
+#load _ data retourne variables x,y de test et de train
 #database s'appele mnist 
-
+ 
+## 1.classifier la BD
 (x_train,y_train),(x_test,y_test)=mnist.load_data()
 print(np.shape(x_train),np.shape(y_train))
 print(np.shape(x_test),np.shape(y_test))
@@ -21,8 +22,8 @@ print(np.shape(x_test),np.shape(y_test))
 #1000 nb image de test 
 #profondeur par défaut 1
 
-#classifier la BD
-#2.visualiser qlq expl d'apprentissage
+\n
+## 2.visualiser qlq expl d'apprentissage
 
 plt.rcParams["figure.figsize"]=[9.,9.] #taille de l'image
 plt.rcParams["figure.autolayout"]=False
