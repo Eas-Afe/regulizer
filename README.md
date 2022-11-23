@@ -38,14 +38,14 @@ plt.show()
 
 
 
-#3. préparer les données en pixels (applatissement + normalisation)
+## 3. préparer les données en pixels (applatissement + normalisation)
 x_train_v=np.reshape(x_train, [60000,784])/255  # la val doit etre entre 0 et 255 dnc pour avoir normalisation on divise sur 60000 images ayant 28*28=784pixels sur 255 
 x_test_v=np.reshape(x_test, [10000,784])/255
 
 print(np.shape(x_train_v))
 print(np.shape(x_test_v))
 
-#4.catégoriser la cible (one hot encoding)
+## 4.catégoriser la cible (one hot encoding)
 
 from tensorflow.keras.utils import to_categorical
 y_train_c=to_categorical(y_train)
@@ -59,7 +59,7 @@ print("avant", y_train_c[10])
 
 
 
-#5.1développer un modèle RN avec 0 couche caché
+## 5.1développer un modèle RN avec 0 couche caché
 #les parametres de modeles sont omégas wi et les biais bi
 def perceptron_monocouche():
   inp=Input(shape=(784,))
@@ -72,7 +72,7 @@ def perceptron_monocouche():
   
   
   
-  #5.2 avec multicouches
+  ## 5.2 avec multicouches
 def perceptron_multicouche():
   inp=Input(shape=(784,)) #784 pixel avec , étiquette 
   c1=Dense(200,activation="sigmoid") (inp) 
@@ -88,7 +88,7 @@ def perceptron_multicouche():
   
   
   
-  #5.2 avec multicouches
+  ## 5.2 avec multicouches
 def perceptron_multicouche_relu():
   inp=Input(shape=(784,)) #784 pixel avec , étiquette 
   c1=Dense(200,activation="relu") (inp) #les valeurs de neurons pour chaque couche est donné dans l'exercice
@@ -102,7 +102,7 @@ def perceptron_multicouche_relu():
   
   
   
-  #6.model d'entrainement
+  ## 6.model d'entrainement
 #a.fct cout
 fc="categorical_crossentropy" #psk on a plusieurs classes si on a que 2 on va utiliser binary_crossentropy
 
@@ -112,40 +112,41 @@ optim=tf.keras.optimizers.SGD(learning_rate=0.001)
 
 
 
+
+## c. apprentissage model monocouche
 from tensorflow.python import metrics
-#c. apprentissage
 modelA=perceptron_monocouche()
 modelA.compile(loss=fc, optimizer=optim, metrics=["accuracy"])
-# 1 b 1 ayt3tl, kolchy ayconsommé mémoire, batch c à d par lots pour mélanger toute les classes vu que 
+#on utilise le batch pour lot pour éviter plusieur problème, si on utilise les données 1 par 1 on va se tarder, si on utilise tous a la fois il va consommer la mémoire
 #fit pour apprendre 
 histA=modelA.fit(x_train_v,y_train_c, validation_data=(x_test_v,y_test_c), epochs=100, batch_size=100, shuffle=True)
 
-#c. apprentissage
+## c. apprentissage model multicouche (sigmoid)
 modelB=perceptron_multicouche()
 modelB.compile(loss=fc, optimizer=optim, metrics=["accuracy"])
 histB=modelB.fit(x_train_v,y_train_c, validation_data=(x_test_v,y_test_c), epochs=100, batch_size=100, shuffle=True)
 
 
-#7.visualiser les couches
+## 7.visualiser les couches
 plt.rcParams["figure.figsize"]=[6., 5.]
 plt.rcParams.update()
 plt.show()
 
 
-#8.evaluer le modèles sur ensemble de test
+## 8.evaluer le modèles sur ensemble de test
 test_loss_modelB, test_acc_modelB = modelB.evaluate(x_test_v,  y_test_c, verbose=2)
 
 
 
 
 
-#modèle de base
-#c. apprentissage
+## modèle de base (multicouche, relu, softmax)
+## c. apprentissage
 modelC=perceptron_multicouche_relu()
 modelC.compile(loss=fc, optimizer=optim, metrics=["accuracy"])
 histC=modelC.fit(x_train_v,y_train_c, validation_data=(x_test_v,y_test_c), epochs=100, batch_size=100, shuffle=True)
 
-#7.visualiser les erreurs
+## 7.visualiser les erreurs
 plt.rcParams["figure.figsize"] = [6., 5.]
 plt.rcParams.update({'font.size': 14})
 plt.plot(histC.history["accuracy"],c='b',label="Ens. d'apprentissage")
@@ -156,7 +157,7 @@ plt.legend()
 plt.show()
 
 
-#8. Evaluer vos modèle sur l’ensemble de test
+## 8. Evaluer vos modèle sur l’ensemble de test
 plt.rcParams["figure.figsize"] = [9., 9.]
 plt.rcParams["figure.autolayout"] = True
 plt.rcParams.update({'font.size': 12})
@@ -205,7 +206,7 @@ plt.show()
 
 
 
-#8.evaluer le modèles sur ensemble de test
+## 8.evaluer le modèles sur ensemble de test
 test_loss_modelC, test_acc_modelC = modelC.evaluate(x_test_v,  y_test_c, verbose=2)
 pred_C= modelC.predict(x_test_v) 
 pred_C= np.argmax(pred_C, axis = 1)[:50] 
@@ -216,7 +217,7 @@ print(label_C)
 
 
 
-#Lasso (L1) rgulizer
+# Lasso (L1) rgulizer
 def lasso_reg(lambd):
   inp=Input(shape=(784,)) #784 pixel avec , étiquette 
   c1=Dense(200, kernel_regularizer=l1(lambd),activation="relu") (inp) #les valeurs de neurons pour chaque couche est donné dans l'exercice
@@ -228,13 +229,13 @@ def lasso_reg(lambd):
   model.summary()
   return model
   
-#c.apprentissage
+## c.apprentissage
 optimAd=tf.keras.optimizers.Adam(learning_rate=0.01)
 lasso=lasso_reg(lambd=0.001)
 lasso.compile(loss=fc, optimizer=optimAd,metrics=["accuracy"])
 hist_lasso=lasso.fit(x_train_v,y_train_c, validation_data=(x_test_v,y_test_c), epochs=100, batch_size=100, shuffle=True)
 
-#7.visualiser les erreurs
+## 7.visualiser les erreurs
 plt.rcParams["figure.figsize"] = [6., 5.]
 plt.rcParams.update({'font.size': 14})
 plt.plot(hist_lasso.history["accuracy"],c='b',label="Ens. d'apprentissage")
@@ -245,7 +246,7 @@ plt.legend()
 plt.show()
 
 
-#8. Evaluer vos modèle sur l’ensemble de test
+## 8. Evaluer vos modèle sur l’ensemble de test
 plt.rcParams["figure.figsize"] = [9., 9.]
 plt.rcParams["figure.autolayout"] = True
 plt.rcParams.update({'font.size': 12})
@@ -281,11 +282,11 @@ else:
 plt.yticks(y_pos, y_pos, fontsize=20)
 plt.show()
 
-9.evaluer le modele de test
+## 9.evaluer le modele de test
 test_loss_lasso, test_acc_lasso = lasso.evaluate(x_test_v,  y_test_c, verbose=2)
 
-#Ridge (L2) regulizer
-#definitin d'un modele
+# Ridge (L2) regulizer
+## definitin d'un modele
 def ridge_reg(lambd):
   inp=Input(shape=(784,)) #784 pixel avec , étiquette 
   c1=Dense(200, kernel_regularizer=l2(lambd),activation="relu") (inp) #les valeurs de neurons pour chaque couche est donné dans l'exercice
@@ -297,13 +298,13 @@ def ridge_reg(lambd):
   model.summary()
   return model
   
- #phase d'apprentissage
+ ## phase d'apprentissage
  ridge=ridge_reg(lambd=0.0001)
  ridge.compile(loss=fc, optimizer=optimAd,metrics=["accuracy"])
  hist_ridge=ridge.fit(x_train_v,y_train_c, validation_data=(x_test_v,y_test_c), epochs=100, batch_size=100, shuffle=True)
  
  
- #visualiser les erreurs
+ ## visualiser les erreurs
 plt.rcParams["figure.figsize"] = [6., 5.]
 plt.rcParams.update({'font.size': 14})
 plt.plot(hist_ridge.history["accuracy"],c='b',label="Ens. d'apprentissage")
@@ -314,7 +315,7 @@ plt.legend()
 plt.show()
 
 
-#8. Evaluer vos modèle sur l’ensemble de test
+## 8. Evaluer vos modèle sur l’ensemble de test
 
 plt.rcParams["figure.figsize"] = [8., 8.]
 plt.rcParams["figure.autolayout"] = True
@@ -335,19 +336,19 @@ ax.set_title("V.Réelle:"+str(y_test[j])+"Prédiction:"+str(np.argmax(y_pred_rid
 plt.show()
 
 
-#evaluer modele de test 
+## evaluer modele de test 
 test_loss_ridge, test_acc_ridge= ridge.evaluate(x_test_v,  y_test_c, verbose=2)
 
 
-#weight decay regulizer
-#fct d'optimisation SGD
+# weight decay regulizer
+## fct d'optimisation SGD
 optim=tf.keras.optimizers.SGD(learning_rate=0.001)
 wd=ridge_reg(lambd=0.0001)
 wd.compile(loss=fc, optimizer=optim,metrics=["accuracy"])
 hist_wd=wd.fit(x_train_v,y_train_c, validation_data=(x_test_v,y_test_c), epochs=100, batch_size=100, shuffle=True)
   
   
-  #7.visualiser les erreurs
+  ## 7.visualiser les erreurs
 plt.rcParams["figure.figsize"] = [6., 5.]
 plt.rcParams.update({'font.size': 14})
 plt.plot(hist_wd.history["accuracy"],c='b',label="Ens. d'apprentissage")
@@ -357,7 +358,7 @@ plt.ylabel("Taux de classification")
 plt.legend()
 plt.show()
 
-#8. Evaluer vos modèle sur l’ensemble de test
+## 8. Evaluer vos modèle sur l’ensemble de test
 plt.rcParams["figure.figsize"] = [9., 9.]
 plt.rcParams["figure.autolayout"] = True
 plt.rcParams.update({'font.size': 12})
@@ -396,10 +397,10 @@ plt.show()
 
 
 
-#evaaluer le modele de test 
+## evaaluer le modele de test 
 test_loss_wd, test_acc_wd= wd.evaluate(x_test_v,  y_test_c, verbose=2)
 
-#verifier estimation de donnée
+## verifier estimation de donnée
 pred_wd= wd.predict(x_test_v) 
 pred_wd= np.argmax(pred_wd, axis = 1)[:20] 
 label_wd = np.argmax(y_test_c,axis = 1)[:20] 
